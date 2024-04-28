@@ -1,7 +1,6 @@
 import React from 'react'
 import { type FC } from 'react'
-import { MaskEditor, toMask } from "react-mask-editor";
-import "./react-mask-editor/style.css"
+import { MaskEditor, toMask } from "./react-mask-editor/index";
 
 import { Retool } from '@tryretool/custom-component-support'
 
@@ -22,7 +21,7 @@ export const ImageMaskEditor: FC = () => {
     name: 'maskUrl',
     inspector: "hidden"
   })
-  const onClick = Retool.useEventCallback({ 
+  const onClick = Retool.useEventCallback({
     name: "click"
   });
   function handleClick() {
@@ -31,18 +30,22 @@ export const ImageMaskEditor: FC = () => {
   }
 
   return <>
-      <MaskEditor
-        src={imageUrl}
-        canvasRef={canvas}
-        maskColor="#bdff05"
-        cursorSize={cursorSize}
-      />
-      <button
-        onClick={handleClick}
-      >
-        Get Mask
-      </button>
-    </>
+    <button
+      onClick={handleClick}
+      style={{
+        marginBottom: "8px"
+      }}
+    >
+      Get Mask
+    </button>
+    <MaskEditor
+      src={imageUrl}
+      canvasRef={canvas}
+      maskColor="#bdff05"
+      maskOpacity={0.75}
+      cursorSize={cursorSize}
+    />
+  </>
 }
 
 export const HelloWorld: FC = () => {
