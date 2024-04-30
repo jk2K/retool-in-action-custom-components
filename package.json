@@ -1,5 +1,5 @@
 {
-  "name": "image-mask-editor",
+  "name": "retool-in-action",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -33,9 +33,9 @@
     "prettier": "^3.0.3"
   },
   "retoolCustomComponentLibraryConfig": {
-    "name": "ImageMaskEditor",
-    "label": "Retool in Action",
-    "description": "create or edit image mask",
+    "name": "RetoolInAction",
+    "label": "Retool In Action",
+    "description": "step by step course to get you building real world apps using retool",
     "entryPoint": "src/index.tsx",
     "outputPath": "dist"
   }
