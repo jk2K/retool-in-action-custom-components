@@ -4,6 +4,7 @@ import "./style.css"
 
 export interface MaskEditorProps {
     src: string;
+    maskCanvasRef?: React.MutableRefObject<HTMLCanvasElement>;
     canvasRef?: React.MutableRefObject<HTMLCanvasElement>;
     cursorSize?: number;
     onCursorSizeChange?: (size: number) => void;
@@ -38,12 +39,16 @@ export const MaskEditor: React.FC<MaskEditorProps> = (props: MaskEditorProps) =>
     const myRef = React.useRef<HTMLDivElement | null>(null);
 
     React.useLayoutEffect(() => {
-        if (canvas.current && !context) {
+        if (canvas.current) {
             // initial image canvas context
             const ctx = (canvas.current as HTMLCanvasElement).getContext("2d");
             setContext(ctx);
+
+            if (props.canvasRef && canvas.current) {
+                props.canvasRef.current = canvas.current
+            }
         }
-    }, [canvas]);
+    }, [canvas, size]);
 
     React.useLayoutEffect(() => {
         if (maskCanvas.current) {
@@ -53,24 +58,20 @@ export const MaskEditor: React.FC<MaskEditorProps> = (props: MaskEditorProps) =>
                 ctx.fillRect(0, 0, size.x, size.y);
             }
             setMaskContext(ctx);
+
+            // Assign the mask to the parent component to make it easier to get the mask image
+            if (props.maskCanvasRef && maskCanvas.current) {
+                props.maskCanvasRef.current = maskCanvas.current;
+            }
         }
-        console.log(maskCanvas.current?.width)
     }, [maskCanvas, size]);
 
-    // Pass mask canvas up
     React.useLayoutEffect(() => {
-        // Assign the mask to the parent component to make it easier to get the mask image
-        if (props.canvasRef && maskCanvas.current) {
-            props.canvasRef.current = maskCanvas.current;
-        }
-    }, [maskCanvas]);
-
-    React.useLayoutEffect(() => {
-        if (cursorCanvas.current && !context) {
+        if (cursorCanvas.current) {
             const ctx = (cursorCanvas.current as HTMLCanvasElement).getContext("2d");
             setCursorContext(ctx);
         }
-    }, [cursorCanvas]);
+    }, [cursorCanvas, size]);
 
     function calculateWidthAndHeight(imageWidth: number, imageHeight: number, containerWidth: number, containerHeight: number) {
         const widthRatio = containerWidth / imageWidth;
@@ -84,6 +85,7 @@ export const MaskEditor: React.FC<MaskEditorProps> = (props: MaskEditorProps) =>
     React.useEffect(() => {
         if (src && context) {
             const img = new Image;
+            img.crossOrigin = "Anonymous"
             img.onload = evt => {
                 if (myRef.current) {
                     let [scaledWidth, scaledHeight] = calculateWidthAndHeight(img.width, img.height, myRef.current.clientWidth, myRef.current.clientHeight)

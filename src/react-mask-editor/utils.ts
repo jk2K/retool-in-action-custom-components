@@ -31,3 +31,28 @@ export const toMask = (canvas: HTMLCanvasElement) => {
     var parts = color.replace("#", "").match(/.{1,2}/g);
     return parts.map(part => parseInt(part, 16));
   }
+
+  export function dataURLtoFile(dataUrl: string) {
+    var arr = dataUrl.split(',');
+    if (arr.length < 1) {
+      return
+    }
+    let mimeMatches = arr[0].match(/:(.*?);/)
+    if (mimeMatches == null || mimeMatches.length < 2) {
+      return
+    }
+
+    let mime = mimeMatches[1],
+      bstr = atob(arr[arr.length - 1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return JSON.stringify({
+      "name": mime.replace("/", "."),
+      "type": mime,
+      "base64Data": arr[arr.length - 1],
+      "sizeBytes": u8arr.length
+    });
+  }

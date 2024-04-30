@@ -1,6 +1,6 @@
 import React from 'react'
 import { type FC } from 'react'
-import { MaskEditor, toMask } from "./react-mask-editor/index";
+import { MaskEditor, toMask, dataURLtoFile } from "./react-mask-editor/index";
 
 import { Retool } from '@tryretool/custom-component-support'
 
@@ -10,22 +10,39 @@ export const ImageMaskEditor: FC = () => {
     defaultWidth: 5,
   });
 
-  const canvas = React.useRef<HTMLCanvasElement>() as React.MutableRefObject<HTMLCanvasElement>;
+  const maskCanvas = React.useRef<HTMLCanvasElement>() as React.MutableRefObject<HTMLCanvasElement>;
+  const originCanvas = React.useRef<HTMLCanvasElement>() as React.MutableRefObject<HTMLCanvasElement>;
   const [imageUrl, _setImageUrl] = Retool.useStateString({
     name: 'imageUrl'
   })
   const [cursorSize, _setCursorSize] = Retool.useStateNumber({
     name: 'cursorSize'
   })
-  const [maskUrl, _setMaskUrl] = Retool.useStateString({
-    name: 'maskUrl',
+  const [maskFile, _setMaskFile] = Retool.useStateString({
+    name: 'maskFile',
+    inspector: "hidden"
+  })
+  const [imageFile, _setImageFile] = Retool.useStateString({
+    name: 'imageFile',
     inspector: "hidden"
   })
   const onClick = Retool.useEventCallback({
     name: "click"
   });
+
+
   function handleClick() {
-    _setMaskUrl(toMask(canvas.current))
+    let tmpMaskDataUrl = toMask(maskCanvas.current)
+    let tmpMaskFile = dataURLtoFile(tmpMaskDataUrl)
+    if (tmpMaskFile != null) {
+      _setMaskFile(tmpMaskFile)
+    }
+
+    let tmpOriginDataUrl = originCanvas.current.toDataURL()
+    let tmpOriginFile = dataURLtoFile(tmpOriginDataUrl)
+    if (tmpOriginFile != null) {
+      _setImageFile(tmpOriginFile)
+    }
     onClick()
   }
 
@@ -40,7 +57,8 @@ export const ImageMaskEditor: FC = () => {
     </button>
     <MaskEditor
       src={imageUrl}
-      canvasRef={canvas}
+      maskCanvasRef={maskCanvas}
+      canvasRef={originCanvas}
       maskColor="#bdff05"
       maskOpacity={0.75}
       cursorSize={cursorSize}
