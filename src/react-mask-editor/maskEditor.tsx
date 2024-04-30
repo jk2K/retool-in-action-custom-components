@@ -13,6 +13,10 @@ export interface MaskEditorProps {
     maskBlendMode?: "normal" | "multiply" | "screen" | "overlay" | "darken" | "lighten" | "color-dodge" | "color-burn" | "hard-light" | "soft-light" | "difference" | "exclusion" | "hue" | "saturation" | "color" | "luminosity"
 }
 
+export type MaskEditorHandle = {
+    onClearMaskClick: () => void;
+};
+
 export const MaskEditorDefaults = {
     cursorSize: 10,
     maskOpacity: .75,
@@ -20,7 +24,7 @@ export const MaskEditorDefaults = {
     maskBlendMode: "normal",
 }
 
-export const MaskEditor: React.FC<MaskEditorProps> = (props: MaskEditorProps) => {
+export const MaskEditor: React.FC<MaskEditorProps> = React.forwardRef<MaskEditorHandle, MaskEditorProps>((props, ref) => {
     const src = props.src;
     const cursorSize = props.cursorSize ?? MaskEditorDefaults.cursorSize;
     const maskColor = props.maskColor ?? MaskEditorDefaults.maskColor;
@@ -37,6 +41,16 @@ export const MaskEditor: React.FC<MaskEditorProps> = (props: MaskEditorProps) =>
     const [cursorContext, setCursorContext] = React.useState<CanvasRenderingContext2D | null>(null);
     const [size, setSize] = React.useState<{ x: number, y: number }>({ x: 256, y: 256 })
     const myRef = React.useRef<HTMLDivElement | null>(null);
+
+    const onClearMaskClick = () => {
+        console.log("Child function called!");
+        maskContext?.clearRect(0, 0, size.x, size.y);
+        maskContext?.fillStyle = "#ffffff";
+        maskContext?.fillRect(0, 0, size.x, size.y);
+    };
+    React.useImperativeHandle(ref, () => ({
+        onClearMaskClick
+    }));
 
     React.useLayoutEffect(() => {
         if (canvas.current) {
@@ -209,4 +223,4 @@ export const MaskEditor: React.FC<MaskEditorProps> = (props: MaskEditorProps) =>
             />
         </div>
     </div>
-}
+});

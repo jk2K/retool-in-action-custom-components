@@ -1,6 +1,6 @@
 import React from 'react'
 import { type FC } from 'react'
-import { MaskEditor, toMask, dataURLtoFile } from "./react-mask-editor/index";
+import { MaskEditor, MaskEditorHandle, toMask, dataURLtoFile } from "./react-mask-editor/index";
 
 import { Retool } from '@tryretool/custom-component-support'
 
@@ -10,6 +10,7 @@ export const ImageMaskEditor: FC = () => {
     defaultWidth: 5,
   });
 
+  const maskEditorRef = React.useRef<MaskEditorHandle>(null);
   const maskCanvas = React.useRef<HTMLCanvasElement>() as React.MutableRefObject<HTMLCanvasElement>;
   const originCanvas = React.useRef<HTMLCanvasElement>() as React.MutableRefObject<HTMLCanvasElement>;
   const [imageUrl, _setImageUrl] = Retool.useStateString({
@@ -46,6 +47,10 @@ export const ImageMaskEditor: FC = () => {
     onClick()
   }
 
+  function handleClearMask() {
+    maskEditorRef.current?.onClearMaskClick();
+  }
+
   return <>
     <button
       onClick={handleClick}
@@ -55,7 +60,17 @@ export const ImageMaskEditor: FC = () => {
     >
       Get Mask
     </button>
+    <button
+      onClick={handleClearMask}
+      style={{
+        marginBottom: "8px",
+        marginLeft: "8px"
+      }}
+    >
+      Clear Mask
+    </button>
     <MaskEditor
+      ref={maskEditorRef}
       src={imageUrl}
       maskCanvasRef={maskCanvas}
       canvasRef={originCanvas}
