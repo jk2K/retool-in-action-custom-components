@@ -44,9 +44,11 @@ export const MaskEditor: React.FC<MaskEditorProps> = React.forwardRef<MaskEditor
 
     const onClearMaskClick = () => {
         console.log("Child function called!");
-        maskContext?.clearRect(0, 0, size.x, size.y);
-        maskContext?.fillStyle = "#ffffff";
-        maskContext?.fillRect(0, 0, size.x, size.y);
+        if (maskContext) {
+            maskContext.clearRect(0, 0, size.x, size.y);
+            maskContext.fillStyle = "#ffffff";
+            maskContext.fillRect(0, 0, size.x, size.y);
+        }
     };
     React.useImperativeHandle(ref, () => ({
         onClearMaskClick
